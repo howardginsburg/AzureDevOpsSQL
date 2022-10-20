@@ -6,6 +6,31 @@ pool: <YourSelfHostedPoolName>
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
+
+- task: SqlAzureDacpacDeployment@1
+  inputs:
+    azureSubscription: '<ServiceConnectionName>'
+    AuthenticationType: 'servicePrincipal'
+    ServerName: '<DatabaseServerName>.database.windows.net'
+    DatabaseName: '<DatabaseName>'
+    deployType: 'InlineSqlTask'
+    SqlInline: 'select getdate() as timeofquery'
+    IpDetectionMethod: 'AutoDetect'
+
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: '<ServiceConnectionName>'
+    ScriptType: 'InlineScript'
+    Inline: |
+      Import-Module SQLServer
+      Import-Module Az.Accounts
+
+      $access_token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
+
+      Invoke-Sqlcmd -ServerInstance <DatabaseServerName>.database.windows.net -Database <DatabaseName> -AccessToken $access_token -query 'select getdate() as timeofquery';
+      
+    azurePowerShellVersion: 'LatestVersion'
+
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
@@ -22,16 +47,5 @@ steps:
       
       Invoke-Sqlcmd -ServerInstance <DatabaseServerName>.database.windows.net -Database <DatabaseName> -AccessToken $access_token -query 'select getdate() as timeofquery';
 
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: '<ServiceConnectionName>'
-    ScriptType: 'InlineScript'
-    Inline: |
-      Import-Module SQLServer
-      Import-Module Az.Accounts
 
-      $access_token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-      Invoke-Sqlcmd -ServerInstance <DatabaseServerName>.database.windows.net -Database <DatabaseName> -AccessToken $access_token -query 'select getdate() as timeofquery';
-      
-    azurePowerShellVersion: 'LatestVersion'
