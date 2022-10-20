@@ -6,7 +6,7 @@ This repo shows how you can run a sql script against a database using PowerShell
 2. Azure Powershell task - shields the user from the complexity of making the connection to Azure, but not from getting an access token.
 3. Powershell task - requires the user to manage the Service Principal credentials, establish the connection to Azure, and get an access token.
 
-All options leverage the SQLServer powershell module.  However, the Azure Powershell and Powershell tasks require a [self hosted pool](https://learn.microsoft.com/azure/devops/pipelines/agents/v2-windows?view=azure-devops) to run the pipeline on since the built in agents are unable to install PowerShell modules.
+All options leverage the SQLServer powershell module.  However, the Azure Powershell and Powershell tasks require a [self hosted pool](https://learn.microsoft.com/azure/devops/pipelines/agents/v2-windows?view=azure-devops) to run the pipeline on since the built in agents are unable to install PowerShell modules.  If you use the SQL Deployment task on a self hosted agent, you must install [sqlpackage.exe](https://learn.microsoft.com/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16)
 
 1. Create an active directory account to use to connect to the database
 
